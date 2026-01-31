@@ -1,0 +1,17 @@
+<% response.sendRedirect("index.action"); %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
