@@ -15,9 +15,11 @@
             <result>/WEB-INF/jsp/index.jsp</result>
         </action>
 
-        <action name="saludar" class="local.unp.desarrolloweb2.tienda.action.SaludarAction">
-            <result>/WEB-INF/jsp/saludo.jsp</result>
+        <action name="sumar" class="local.unp.desarrolloweb2.tienda.action.IndexAction" method="sumar">
+            <result name="input">/WEB-INF/jsp/index.jsp</result>
+            <result name="success">/WEB-INF/jsp/index.jsp</result>
         </action>
     </package>
 
 </struts>
+
