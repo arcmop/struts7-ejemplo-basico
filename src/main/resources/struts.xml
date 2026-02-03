@@ -6,19 +6,15 @@
 <struts>
 
     <constant name="struts.devMode" value="true"/>
+    <constant name="struts.custom.i18n.resources" value="messages"/>
+    <constant name="struts.locale" value="es"/>
 
     <package name="landing" extends="struts-default">
         
-        <default-action-ref name="index" />
-
-        <action name="index" class="local.unp.desarrolloweb2.tienda.action.IndexAction">
-            <result>/WEB-INF/jsp/index.jsp</result>
+        <action name="productos" class="local.unp.desarrolloweb2.tienda.action.ProductoAction">
+            <result>/WEB-INF/jsp/productos.jsp</result>
         </action>
 
-        <action name="sumar" class="local.unp.desarrolloweb2.tienda.action.IndexAction" method="sumar">
-            <result name="input">/WEB-INF/jsp/index.jsp</result>
-            <result name="success">/WEB-INF/jsp/index.jsp</result>
-        </action>
     </package>
 
 </struts>

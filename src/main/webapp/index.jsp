@@ -1,4 +1,4 @@
-<% response.sendRedirect("index.action"); %>
+<% response.sendRedirect("productos.action"); %>
 
 
 
