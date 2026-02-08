@@ -54,18 +54,24 @@
                     <span class="small text-muted"><s:text name="clock.label" /></span>
                     <span id="liveClock" class="fw-semibold"></span>
                 </div>
-                <div class="lang-switch d-flex align-items-center gap-2">
-                    <span class="small text-muted"><s:text name="language.label" /></span>
-                    <div class="btn-group btn-group-sm" role="group" aria-label="<s:text name='language.label' />">
-                        <s:a action="productos" cssClass="btn btn-outline-secondary">
-                            <s:param name="request_locale">es</s:param>
-                            <s:text name="language.es" />
-                        </s:a>
-                        <s:a action="productos" cssClass="btn btn-outline-secondary">
-                            <s:param name="request_locale">en</s:param>
-                            <s:text name="language.en" />
-                        </s:a>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <div class="lang-switch d-flex align-items-center gap-2">
+                        <span class="small text-muted"><s:text name="language.label" /></span>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="<s:text name='language.label' />">
+                            <s:a action="productos" cssClass="btn btn-outline-secondary">
+                                <s:param name="request_locale">es</s:param>
+                                <s:text name="language.es" />
+                            </s:a>
+                            <s:a action="productos" cssClass="btn btn-outline-secondary">
+                                <s:param name="request_locale">en</s:param>
+                                <s:text name="language.en" />
+                            </s:a>
+                        </div>
                     </div>
+                    <s:a action="producto-nuevo" cssClass="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-circle-plus me-1"></i>
+                        <s:text name="button.new" />
+                    </s:a>
                 </div>
             </div>
 
@@ -106,12 +112,38 @@
                                         </span>
                                         <span class="badge text-bg-light">
                                             <i class="fa-solid fa-box text-primary me-1"></i>
-                                            <s:text name="badge.stock" />
+                                            <s:text name="badge.stock" />: <s:property value="stock" />
                                         </span>
                                         <span class="badge text-bg-light">
                                             <i class="fa-solid fa-bolt text-warning me-1"></i>
                                             <s:text name="badge.delivery" />
                                         </span>
+                                    </div>
+                                    <div class="card-actions d-flex flex-wrap gap-2 pt-2">
+                                        <s:url var="editUrl" action="producto-editar">
+                                            <s:param name="id" value="id" />
+                                        </s:url>
+                                        <a
+                                            class="btn btn-sm btn-outline-primary action-btn"
+                                            href="<s:property value='#editUrl' />">
+                                            <i class="fa-solid fa-pen-to-square me-1"></i>
+                                            <s:text name="button.edit" />
+                                        </a>
+                                        <s:url var="deleteUrl" action="producto-eliminar" />
+                                        <s:text name="confirm.delete" var="confirmDeleteMessage">
+                                            <s:param value="nombre" />
+                                        </s:text>
+                                        <form
+                                            class="d-inline"
+                                            action="<s:property value='#deleteUrl' />"
+                                            method="post"
+                                            data-confirm="<s:property value='#confirmDeleteMessage' />">
+                                            <input type="hidden" name="id" value="<s:property value='id' />" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger action-btn">
+                                                <i class="fa-solid fa-trash-can me-1"></i>
+                                                <s:text name="button.delete" />
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

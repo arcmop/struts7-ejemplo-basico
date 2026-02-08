@@ -9,6 +9,7 @@ import java.util.List;
 import local.unp.desarrolloweb2.tienda.model.Producto;
 import local.unp.desarrolloweb2.tienda.service.TiendaService;
 import org.apache.struts2.ActionSupport;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 /**
  *
@@ -20,6 +21,7 @@ public class ProductoAction extends ActionSupport {
     private Integer anio;
     private String anioTexto;
 
+    @StrutsParameter(depth = 1)
     public void setListaProducto(List<Producto> listaProducto) {
         this.listaProducto = listaProducto;
     }

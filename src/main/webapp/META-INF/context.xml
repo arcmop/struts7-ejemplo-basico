@@ -1,2 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/tienda5"/>
+<Context path="/tienda6">
+  <Resource
+      name="jdbc/tienda"
+      auth="Container"
+      type="javax.sql.DataSource"
+      factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+      driverClassName="org.postgresql.Driver"
+      url="jdbc:postgresql://${app.database.host}:${app.database.port}/${app.database.name}"
+      username="${app.database.user}"
+      password="${app.database.password}"
+      maxTotal="20"
+      maxIdle="10"
+      maxWaitMillis="10000"
+      testOnBorrow="true"
+      validationQuery="SELECT 1"
+  />
+</Context>

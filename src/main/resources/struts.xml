@@ -8,11 +8,52 @@
     <constant name="struts.devMode" value="true"/>
     <constant name="struts.custom.i18n.resources" value="messages"/>
     <constant name="struts.locale" value="es"/>
+    <constant name="struts.allowlist.packageNames" value="local.unp.desarrolloweb2.tienda.model"/>
+    <constant name="struts.allowlist.classes" value="java.util.Locale"/>
 
     <package name="landing" extends="struts-default">
+
+        <global-results>
+            <result name="global-error">/WEB-INF/jsp/error.jsp</result>
+        </global-results>
+
+        <global-exception-mappings>
+            <exception-mapping exception="java.lang.Exception" result="global-error"/>
+        </global-exception-mappings>
         
         <action name="productos" class="local.unp.desarrolloweb2.tienda.action.ProductoAction">
             <result>/WEB-INF/jsp/productos.jsp</result>
+        </action>
+
+        <action name="producto-editar" class="local.unp.desarrolloweb2.tienda.action.ProductoEditarAction">
+            <result>/WEB-INF/jsp/producto-editar.jsp</result>
+            <result name="input">/WEB-INF/jsp/producto-editar.jsp</result>
+            <result name="error">/WEB-INF/jsp/producto-editar.jsp</result>
+        </action>
+
+        <action name="producto-nuevo" class="local.unp.desarrolloweb2.tienda.action.ProductoNuevoAction">
+            <result>/WEB-INF/jsp/producto-editar.jsp</result>
+        </action>
+
+        <action name="producto-actualizar" class="local.unp.desarrolloweb2.tienda.action.ProductoActualizarAction">
+            <result type="redirectAction">productos</result>
+            <result name="input">/WEB-INF/jsp/producto-editar.jsp</result>
+            <result name="error">/WEB-INF/jsp/producto-editar.jsp</result>
+        </action>
+
+        <action name="producto-registrar" class="local.unp.desarrolloweb2.tienda.action.ProductoRegistrarAction">
+            <result type="redirectAction">productos</result>
+            <result name="input">/WEB-INF/jsp/producto-editar.jsp</result>
+            <result name="error">/WEB-INF/jsp/producto-editar.jsp</result>
+        </action>
+
+        <action name="producto-eliminar" class="local.unp.desarrolloweb2.tienda.action.ProductoEliminarAction">
+            <result type="redirectAction">productos</result>
+            <result name="error" type="redirectAction">productos</result>
+        </action>
+
+        <action name="*" class="local.unp.desarrolloweb2.tienda.action.NotFoundAction">
+            <result>/WEB-INF/jsp/404.jsp</result>
         </action>
 
     </package>

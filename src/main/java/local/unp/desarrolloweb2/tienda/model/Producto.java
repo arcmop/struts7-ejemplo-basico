@@ -14,6 +14,7 @@ public class Producto {
     public String nombre;
     public String descripcion;
     public Double precio;
+    public Integer stock;
 
     public Producto() {
     }
@@ -23,6 +24,14 @@ public class Producto {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
+    }
+
+    public Producto(Integer Id, String nombre, String descripcion, Double precio, Integer stock) {
+        this.Id = Id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.stock = stock;
     }
 
     public Integer getId() {
@@ -55,6 +64,14 @@ public class Producto {
 
     public void setPrecio(Double precio) {
         this.precio = precio;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
 }
