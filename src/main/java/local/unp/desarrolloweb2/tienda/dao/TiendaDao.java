@@ -1,13 +1,13 @@
-package local.unp.desarrolloweb2.tienda.service;
+package local.unp.desarrolloweb2.tienda.dao;
 
 import java.util.List;
 import local.unp.desarrolloweb2.tienda.model.Producto;
 
-public interface TiendaService {
+public interface TiendaDao {
 
-    List<Producto> getListaProductos();
+    List<Producto> listarProductos();
 
-    Producto getProductoPorId(Integer id);
+    Producto buscarProductoPorId(Integer id);
 
     void actualizarProducto(Producto producto);
 

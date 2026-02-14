@@ -6,15 +6,47 @@
 <struts>
 
     <constant name="struts.devMode" value="true"/>
+    <constant name="struts.mapper.alwaysSelectFullNamespace" value="false"/>
     <constant name="struts.custom.i18n.resources" value="messages"/>
     <constant name="struts.locale" value="es"/>
     <constant name="struts.allowlist.packageNames" value="local.unp.desarrolloweb2.tienda.model"/>
     <constant name="struts.allowlist.classes" value="java.util.Locale"/>
 
+    <bean name="tiendaDao"
+          type="local.unp.desarrolloweb2.tienda.dao.TiendaDao"
+          class="local.unp.desarrolloweb2.tienda.dao.TiendaDaoImpl"
+    />
+    <bean name="tiendaService"
+          type="local.unp.desarrolloweb2.tienda.service.TiendaService"          
+          class="local.unp.desarrolloweb2.tienda.service.TiendaServiceImpl"
+    />
+
     <package name="landing" extends="struts-default">
+
+        <interceptors>
+            <interceptor name="timer" class="local.unp.desarrolloweb2.tienda.interceptor.TimerInterceptor"/>
+            <interceptor name="adminSession" class="local.unp.desarrolloweb2.tienda.interceptor.AdminSessionInterceptor"/>
+            <interceptor-stack name="publicStack">
+                <interceptor-ref name="timer"/>
+                <interceptor-ref name="defaultStack">
+                    <param name="i18n.localeStorage">cookie</param>
+                </interceptor-ref>
+            </interceptor-stack>
+            <interceptor-stack name="adminStack">
+                <interceptor-ref name="timer"/>
+                <interceptor-ref name="adminSession"/>
+                <interceptor-ref name="defaultStack"/>
+            </interceptor-stack>
+        </interceptors>
+
+        <default-interceptor-ref name="publicStack"/>
 
         <global-results>
             <result name="global-error">/WEB-INF/jsp/error.jsp</result>
+            <result name="loginRequired" type="redirectAction">
+                <param name="actionName">productos</param>
+                <param name="loginErrorCode">auth.error.required</param>
+            </result>
         </global-results>
 
         <global-exception-mappings>
@@ -26,30 +58,56 @@
         </action>
 
         <action name="producto-editar" class="local.unp.desarrolloweb2.tienda.action.ProductoEditarAction">
+            <interceptor-ref name="adminStack"/>
             <result>/WEB-INF/jsp/producto-editar.jsp</result>
             <result name="input">/WEB-INF/jsp/producto-editar.jsp</result>
             <result name="error">/WEB-INF/jsp/producto-editar.jsp</result>
         </action>
 
         <action name="producto-nuevo" class="local.unp.desarrolloweb2.tienda.action.ProductoNuevoAction">
+            <interceptor-ref name="adminStack"/>
             <result>/WEB-INF/jsp/producto-editar.jsp</result>
         </action>
 
         <action name="producto-actualizar" class="local.unp.desarrolloweb2.tienda.action.ProductoActualizarAction">
+            <interceptor-ref name="adminStack"/>
             <result type="redirectAction">productos</result>
             <result name="input">/WEB-INF/jsp/producto-editar.jsp</result>
             <result name="error">/WEB-INF/jsp/producto-editar.jsp</result>
         </action>
 
         <action name="producto-registrar" class="local.unp.desarrolloweb2.tienda.action.ProductoRegistrarAction">
+            <interceptor-ref name="adminStack"/>
             <result type="redirectAction">productos</result>
             <result name="input">/WEB-INF/jsp/producto-editar.jsp</result>
             <result name="error">/WEB-INF/jsp/producto-editar.jsp</result>
         </action>
 
         <action name="producto-eliminar" class="local.unp.desarrolloweb2.tienda.action.ProductoEliminarAction">
+            <interceptor-ref name="adminStack"/>
             <result type="redirectAction">productos</result>
             <result name="error" type="redirectAction">productos</result>
+        </action>
+
+        <action name="login" class="local.unp.desarrolloweb2.tienda.action.LoginAction">
+            <result type="redirectAction">
+                <param name="actionName">productos</param>
+            </result>
+            <result name="input" type="redirectAction">
+                <param name="actionName">productos</param>
+                <param name="loginErrorCode">auth.error.invalid</param>
+            </result>
+            <result name="error" type="redirectAction">
+                <param name="actionName">productos</param>
+            </result>
+        </action>
+
+        <action name="logout" class="local.unp.desarrolloweb2.tienda.action.LogoutAction">
+            <result type="redirectAction">productos</result>
+        </action>
+
+        <action name="*/*" class="local.unp.desarrolloweb2.tienda.action.NotFoundAction">
+            <result>/WEB-INF/jsp/404.jsp</result>
         </action>
 
         <action name="*" class="local.unp.desarrolloweb2.tienda.action.NotFoundAction">

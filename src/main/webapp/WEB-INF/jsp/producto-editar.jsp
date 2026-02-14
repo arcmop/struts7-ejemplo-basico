@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" session="false" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <s:set var="isNuevo" value="producto != null && producto.id == null" />
 <!doctype html>

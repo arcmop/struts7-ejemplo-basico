@@ -4,6 +4,7 @@
  */
 package local.unp.desarrolloweb2.tienda.action;
 
+import org.apache.struts2.inject.Inject;
 import org.apache.struts2.ActionSupport;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import local.unp.desarrolloweb2.tienda.model.Producto;
@@ -15,6 +16,7 @@ import local.unp.desarrolloweb2.tienda.service.TiendaService;
  */
 public class ProductoEditarAction extends ActionSupport {
 
+    private TiendaService tiendaService;
     private Integer id;
 
     public Producto producto;
@@ -27,7 +29,7 @@ public class ProductoEditarAction extends ActionSupport {
         }
 
         try {
-            producto = TiendaService.getProductoPorId(id);
+            producto = tiendaService.getProductoPorId(id);
             if (producto == null) {
                 addActionError(getText("error.producto.not_found"));
                 return INPUT;
@@ -56,5 +58,10 @@ public class ProductoEditarAction extends ActionSupport {
 
     public void setProducto(Producto producto) {
         this.producto = producto;
+    }
+
+    @Inject("tiendaService")
+    public void setTiendaService(TiendaService tiendaService) {
+        this.tiendaService = tiendaService;
     }
 }

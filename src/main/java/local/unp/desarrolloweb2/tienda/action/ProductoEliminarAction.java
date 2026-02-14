@@ -4,6 +4,7 @@
  */
 package local.unp.desarrolloweb2.tienda.action;
 
+import org.apache.struts2.inject.Inject;
 import org.apache.struts2.ActionSupport;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import local.unp.desarrolloweb2.tienda.service.TiendaService;
@@ -14,6 +15,7 @@ import local.unp.desarrolloweb2.tienda.service.TiendaService;
  */
 public class ProductoEliminarAction extends ActionSupport {
 
+    private TiendaService tiendaService;
     private Integer id;
 
     @Override
@@ -23,7 +25,7 @@ public class ProductoEliminarAction extends ActionSupport {
             return ERROR;
         }
 
-        TiendaService.eliminarProducto(id);
+        tiendaService.eliminarProducto(id);
         return SUCCESS;
     }
 
@@ -34,5 +36,10 @@ public class ProductoEliminarAction extends ActionSupport {
     @StrutsParameter(depth = 1)
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Inject("tiendaService")
+    public void setTiendaService(TiendaService tiendaService) {
+        this.tiendaService = tiendaService;
     }
 }

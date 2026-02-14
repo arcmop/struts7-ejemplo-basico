@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" session="false" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <!doctype html>
 <html lang="<s:property value='%{locale.language}' />">
@@ -13,6 +13,8 @@
         <link href="<s:url value='/assets/css/productos.css' />" rel="stylesheet">
     </head>
     <body>
+        <s:set var="isAdminSession" value="admin" />
+        <s:url var="loginUrl" action="login" />
         <div class="container py-5">
             <div class="hero p-4 p-md-5 mb-4 animate__animated animate__fadeIn">
                 <div class="hero-content d-flex flex-column flex-lg-row gap-4 align-items-start align-items-lg-center">
@@ -59,19 +61,36 @@
                         <span class="small text-muted"><s:text name="language.label" /></span>
                         <div class="btn-group btn-group-sm" role="group" aria-label="<s:text name='language.label' />">
                             <s:a action="productos" cssClass="btn btn-outline-secondary">
-                                <s:param name="request_locale">es</s:param>
+                                <s:param name="request_cookie_locale">es</s:param>
                                 <s:text name="language.es" />
                             </s:a>
                             <s:a action="productos" cssClass="btn btn-outline-secondary">
-                                <s:param name="request_locale">en</s:param>
+                                <s:param name="request_cookie_locale">en</s:param>
                                 <s:text name="language.en" />
                             </s:a>
                         </div>
                     </div>
-                    <s:a action="producto-nuevo" cssClass="btn btn-primary btn-sm">
-                        <i class="fa-solid fa-circle-plus me-1"></i>
-                        <s:text name="button.new" />
-                    </s:a>
+                    <s:if test="#isAdminSession">
+                        <span class="badge text-bg-success"><s:text name="auth.admin_badge" /></span>
+                        <s:a action="producto-nuevo" cssClass="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-circle-plus me-1"></i>
+                            <s:text name="button.new" />
+                        </s:a>
+                        <s:a action="logout" cssClass="btn btn-outline-danger btn-sm">
+                            <i class="fa-solid fa-right-from-bracket me-1"></i>
+                            <s:text name="auth.logout" />
+                        </s:a>
+                    </s:if>
+                    <s:else>
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#loginModal">
+                            <i class="fa-solid fa-right-to-bracket me-1"></i>
+                            <s:text name="auth.login" />
+                        </button>
+                    </s:else>
                 </div>
             </div>
 
@@ -80,6 +99,60 @@
                     <i class="fa-solid fa-circle-exclamation"></i>
                     <div><s:actionerror /></div>
                 </div>
+            </s:if>
+
+            <s:if test="!#isAdminSession">
+                <div class="modal fade login-modal" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="loginModalLabel">
+                                    <i class="fa-solid fa-user-shield me-2"></i>
+                                    <s:text name="auth.login" />
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <s:if test="loginError != null && !loginError.isEmpty()">
+                                    <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        <div><s:property value="loginError" /></div>
+                                    </div>
+                                </s:if>
+                                <form action="<s:property value='#loginUrl' />" method="post" class="d-grid gap-3">
+                                    <div>
+                                        <label for="loginUsername" class="form-label"><s:text name="auth.username" /></label>
+                                        <input
+                                            id="loginUsername"
+                                            type="text"
+                                            name="username"
+                                            class="form-control"
+                                            autocomplete="username"
+                                            required />
+                                    </div>
+                                    <div>
+                                        <label for="loginPassword" class="form-label"><s:text name="auth.password" /></label>
+                                        <input
+                                            id="loginPassword"
+                                            type="password"
+                                            name="password"
+                                            class="form-control"
+                                            autocomplete="current-password"
+                                            required />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa-solid fa-right-to-bracket me-1"></i>
+                                        <s:text name="auth.login" />
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    id="loginModalState"
+                    class="d-none"
+                    data-auto-open="<s:property value='loginErrorCode != null' />"></div>
             </s:if>
 
             <s:if test="listaProducto != null && listaProducto.size > 0">
@@ -119,32 +192,34 @@
                                             <s:text name="badge.delivery" />
                                         </span>
                                     </div>
-                                    <div class="card-actions d-flex flex-wrap gap-2 pt-2">
-                                        <s:url var="editUrl" action="producto-editar">
-                                            <s:param name="id" value="id" />
-                                        </s:url>
-                                        <a
-                                            class="btn btn-sm btn-outline-primary action-btn"
-                                            href="<s:property value='#editUrl' />">
-                                            <i class="fa-solid fa-pen-to-square me-1"></i>
-                                            <s:text name="button.edit" />
-                                        </a>
-                                        <s:url var="deleteUrl" action="producto-eliminar" />
-                                        <s:text name="confirm.delete" var="confirmDeleteMessage">
-                                            <s:param value="nombre" />
-                                        </s:text>
-                                        <form
-                                            class="d-inline"
-                                            action="<s:property value='#deleteUrl' />"
-                                            method="post"
-                                            data-confirm="<s:property value='#confirmDeleteMessage' />">
-                                            <input type="hidden" name="id" value="<s:property value='id' />" />
-                                            <button type="submit" class="btn btn-sm btn-outline-danger action-btn">
-                                                <i class="fa-solid fa-trash-can me-1"></i>
-                                                <s:text name="button.delete" />
-                                            </button>
-                                        </form>
-                                    </div>
+                                    <s:if test="#isAdminSession">
+                                        <div class="card-actions d-flex flex-wrap gap-2 pt-2">
+                                            <s:url var="editUrl" action="producto-editar">
+                                                <s:param name="id" value="id" />
+                                            </s:url>
+                                            <a
+                                                class="btn btn-sm btn-outline-primary action-btn"
+                                                href="<s:property value='#editUrl' />">
+                                                <i class="fa-solid fa-pen-to-square me-1"></i>
+                                                <s:text name="button.edit" />
+                                            </a>
+                                            <s:url var="deleteUrl" action="producto-eliminar" />
+                                            <s:text name="confirm.delete" var="confirmDeleteMessage">
+                                                <s:param value="nombre" />
+                                            </s:text>
+                                            <form
+                                                class="d-inline"
+                                                action="<s:property value='#deleteUrl' />"
+                                                method="post"
+                                                data-confirm="<s:property value='#confirmDeleteMessage' />">
+                                                <input type="hidden" name="id" value="<s:property value='id' />" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger action-btn">
+                                                    <i class="fa-solid fa-trash-can me-1"></i>
+                                                    <s:text name="button.delete" />
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </s:if>
                                 </div>
                             </div>
                         </div>

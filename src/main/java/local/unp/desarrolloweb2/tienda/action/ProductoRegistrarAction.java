@@ -4,6 +4,7 @@
  */
 package local.unp.desarrolloweb2.tienda.action;
 
+import org.apache.struts2.inject.Inject;
 import java.math.BigDecimal;
 import local.unp.desarrolloweb2.tienda.model.Producto;
 import local.unp.desarrolloweb2.tienda.service.TiendaService;
@@ -23,6 +24,7 @@ public class ProductoRegistrarAction extends ActionSupport {
     private static final BigDecimal PRECIO_MAX = new BigDecimal("99999999.99");
     private static final int STOCK_MAX = 2147483647;
 
+    private TiendaService tiendaService;
     private Producto producto;
 
     @Override
@@ -32,7 +34,7 @@ public class ProductoRegistrarAction extends ActionSupport {
             return INPUT;
         }
 
-        TiendaService.crearProducto(producto);
+        tiendaService.crearProducto(producto);
         return SUCCESS;
     }
 
@@ -101,6 +103,11 @@ public class ProductoRegistrarAction extends ActionSupport {
     @StrutsParameter(depth = 1)
     public void setProducto(Producto producto) {
         this.producto = producto;
+    }
+
+    @Inject("tiendaService")
+    public void setTiendaService(TiendaService tiendaService) {
+        this.tiendaService = tiendaService;
     }
 
     private boolean isProductoValido() {

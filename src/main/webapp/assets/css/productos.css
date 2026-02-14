@@ -176,3 +176,39 @@ body {
     border-color: rgba(14, 58, 91, 0.45);
     box-shadow: 0 0 0 0.2rem rgba(14, 58, 91, 0.12);
 }
+
+.login-modal .modal-content {
+    border: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 22px 42px rgba(15, 23, 42, 0.2);
+}
+
+.login-modal .modal-header {
+    border-bottom: 0;
+    background: linear-gradient(135deg, var(--brand) 0%, #0c2a45 70%, #0b1f33 100%);
+    color: #fff;
+}
+
+.login-modal .modal-title {
+    font-weight: 700;
+}
+
+.login-modal .modal-body {
+    background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+}
+
+.login-modal .form-label {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.login-modal .form-control {
+    border-radius: 12px;
+    border-color: rgba(15, 23, 42, 0.18);
+}
+
+.login-modal .form-control:focus {
+    border-color: rgba(14, 58, 91, 0.45);
+    box-shadow: 0 0 0 0.2rem rgba(14, 58, 91, 0.12);
+}

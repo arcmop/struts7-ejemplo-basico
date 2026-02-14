@@ -6,7 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apache.struts2" level="debug"/>
+        <Logger name="org.apache.struts2" level="info"/>
+        <Logger name="local.unp.desarrolloweb2.tienda.interceptor" level="info"/>
         <Root level="warn">
             <AppenderRef ref="STDOUT"/>
         </Root>
