@@ -37,6 +37,153 @@ public class TiendaDaoImpl implements TiendaDao {
     }
 
     @Override
+    public List<Producto> listarProductosPaginados(int limit, int offset) {
+        List<Producto> productos = new ArrayList<>();
+        if (limit <= 0 || offset < 0) {
+            return productos;
+        }
+
+        DataSource dataSource = lookupDataSource();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT id, nombre, descripcion, precio, stock "
+                     + "FROM public.producto ORDER BY id LIMIT ? OFFSET ?"
+             )) {
+            statement.setInt(1, limit);
+            statement.setInt(2, offset);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    productos.add(mapProducto(resultSet));
+                }
+            }
+            return productos;
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Error consultando productos paginados en la base de datos.", ex);
+        }
+    }
+
+    @Override
+    public int contarProductos() {
+        DataSource dataSource = lookupDataSource();
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT COUNT(1) AS total FROM public.producto")) {
+            if (resultSet.next()) {
+                return resultSet.getInt("total");
+            }
+            return 0;
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Error contando productos en la base de datos.", ex);
+        }
+    }
+
+    @Override
+    public boolean autenticarUsuario(String username, String passwordHash) {
+        if (username == null || passwordHash == null) {
+            return false;
+        }
+
+        DataSource dataSource = lookupDataSource();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT 1 FROM public.usuario "
+                     + "WHERE username = ? AND clave = ? AND activo = TRUE LIMIT 1"
+            )) {
+            statement.setString(1, username);
+            statement.setString(2, passwordHash);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Error validando credenciales de usuario en la base de datos.", ex);
+        }
+    }
+
+    @Override
+    public boolean autenticarAdministrador(String username, String passwordHash) {
+        if (username == null || passwordHash == null) {
+            return false;
+        }
+
+        DataSource dataSource = lookupDataSource();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT 1 FROM public.usuario "
+                     + "WHERE username = ? AND clave = ? AND es_admin = TRUE AND activo = TRUE LIMIT 1"
+            )) {
+            statement.setString(1, username);
+            statement.setString(2, passwordHash);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Error validando credenciales de administrador en la base de datos.", ex);
+        }
+    }
+
+    @Override
+    public boolean existeUsuarioPorUsername(String username) {
+        if (username == null) {
+            return false;
+        }
+
+        DataSource dataSource = lookupDataSource();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT 1 FROM public.usuario WHERE username = ? LIMIT 1"
+             )) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Error consultando existencia del usuario en la base de datos.", ex);
+        }
+    }
+
+    @Override
+    public void crearUsuario(String username, String nombreCompleto, String passwordHash, boolean esAdmin, boolean activo) {
+        DataSource dataSource = lookupDataSource();
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "INSERT INTO public.usuario (username, clave, nombre_completo, es_admin, activo) "
+                     + "VALUES (?, ?, ?, ?, ?)"
+             )) {
+            statement.setString(1, username);
+            statement.setString(2, passwordHash);
+            statement.setString(3, nombreCompleto);
+            statement.setBoolean(4, esAdmin);
+            statement.setBoolean(5, activo);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Error registrando usuario en la base de datos.", ex);
+        }
+    }
+
+    @Override
+    public boolean actualizarClaveAdministrador(String username, String currentPasswordHash, String newPasswordHash) {
+        if (username == null || currentPasswordHash == null || newPasswordHash == null) {
+            return false;
+        }
+
+        DataSource dataSource = lookupDataSource();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE public.usuario "
+                     + "SET clave = ?, actualizado_en = CURRENT_TIMESTAMP "
+                     + "WHERE username = ? AND clave = ? AND es_admin = TRUE AND activo = TRUE"
+             )) {
+            statement.setString(1, newPasswordHash);
+            statement.setString(2, username);
+            statement.setString(3, currentPasswordHash);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Error actualizando clave de administrador en la base de datos.", ex);
+        }
+    }
+
+    @Override
     public Producto buscarProductoPorId(Integer id) {
         if (id == null) {
             return null;

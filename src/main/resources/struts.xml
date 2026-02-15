@@ -58,7 +58,6 @@
         </action>
 
         <action name="producto-editar" class="local.unp.desarrolloweb2.tienda.action.ProductoEditarAction">
-            <interceptor-ref name="adminStack"/>
             <result>/WEB-INF/jsp/producto-editar.jsp</result>
             <result name="input">/WEB-INF/jsp/producto-editar.jsp</result>
             <result name="error">/WEB-INF/jsp/producto-editar.jsp</result>
@@ -70,7 +69,6 @@
         </action>
 
         <action name="producto-actualizar" class="local.unp.desarrolloweb2.tienda.action.ProductoActualizarAction">
-            <interceptor-ref name="adminStack"/>
             <result type="redirectAction">productos</result>
             <result name="input">/WEB-INF/jsp/producto-editar.jsp</result>
             <result name="error">/WEB-INF/jsp/producto-editar.jsp</result>
@@ -87,6 +85,30 @@
             <interceptor-ref name="adminStack"/>
             <result type="redirectAction">productos</result>
             <result name="error" type="redirectAction">productos</result>
+        </action>
+
+        <action name="usuario-nuevo" class="local.unp.desarrolloweb2.tienda.action.UsuarioNuevoAction">
+            <interceptor-ref name="adminStack"/>
+            <result>/WEB-INF/jsp/usuario-editar.jsp</result>
+        </action>
+
+        <action name="usuario-registrar" class="local.unp.desarrolloweb2.tienda.action.UsuarioRegistrarAction">
+            <interceptor-ref name="adminStack"/>
+            <result>/WEB-INF/jsp/usuario-editar.jsp</result>
+            <result name="input">/WEB-INF/jsp/usuario-editar.jsp</result>
+            <result name="error">/WEB-INF/jsp/usuario-editar.jsp</result>
+        </action>
+
+        <action name="password-cambiar" class="local.unp.desarrolloweb2.tienda.action.PasswordCambiarAction">
+            <interceptor-ref name="adminStack"/>
+            <result>/WEB-INF/jsp/password-cambiar.jsp</result>
+        </action>
+
+        <action name="password-actualizar" class="local.unp.desarrolloweb2.tienda.action.PasswordActualizarAction">
+            <interceptor-ref name="adminStack"/>
+            <result>/WEB-INF/jsp/password-cambiar.jsp</result>
+            <result name="input">/WEB-INF/jsp/password-cambiar.jsp</result>
+            <result name="error">/WEB-INF/jsp/password-cambiar.jsp</result>
         </action>
 
         <action name="login" class="local.unp.desarrolloweb2.tienda.action.LoginAction">

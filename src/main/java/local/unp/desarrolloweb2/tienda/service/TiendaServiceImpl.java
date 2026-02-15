@@ -4,6 +4,7 @@ import org.apache.struts2.inject.Inject;
 import java.util.List;
 import local.unp.desarrolloweb2.tienda.dao.TiendaDao;
 import local.unp.desarrolloweb2.tienda.model.Producto;
+import local.unp.desarrolloweb2.tienda.util.HashUtils;
 
 public class TiendaServiceImpl implements TiendaService {
 
@@ -17,6 +18,79 @@ public class TiendaServiceImpl implements TiendaService {
     @Override
     public List<Producto> getListaProductos() {
         return tiendaDao.listarProductos();
+    }
+
+    @Override
+    public List<Producto> getListaProductosPaginados(int pagina, int tamanioPagina) {
+        if (pagina < 1 || tamanioPagina < 1) {
+            throw new IllegalArgumentException("Parámetros de paginación inválidos.");
+        }
+        int offset = (pagina - 1) * tamanioPagina;
+        return tiendaDao.listarProductosPaginados(tamanioPagina, offset);
+    }
+
+    @Override
+    public int getTotalProductos() {
+        return tiendaDao.contarProductos();
+    }
+
+    @Override
+    public boolean autenticarUsuario(String username, String password) {
+        if (username == null || username.trim().isEmpty() || password == null || password.isEmpty()) {
+            return false;
+        }
+        String passwordHash = HashUtils.sha256Hex(password);
+        return tiendaDao.autenticarUsuario(username.trim(), passwordHash);
+    }
+
+    @Override
+    public boolean autenticarAdministrador(String username, String password) {
+        if (username == null || username.trim().isEmpty() || password == null || password.isEmpty()) {
+            return false;
+        }
+        String passwordHash = HashUtils.sha256Hex(password);
+        return tiendaDao.autenticarAdministrador(username.trim(), passwordHash);
+    }
+
+    @Override
+    public boolean registrarUsuario(String username, String nombreCompleto, String password, boolean esAdmin) {
+        if (username == null || username.trim().isEmpty() || password == null || password.isEmpty()) {
+            return false;
+        }
+
+        String normalizedUsername = username.trim();
+        if (tiendaDao.existeUsuarioPorUsername(normalizedUsername)) {
+            return false;
+        }
+
+        String normalizedNombreCompleto = nombreCompleto;
+        if (normalizedNombreCompleto != null) {
+            normalizedNombreCompleto = normalizedNombreCompleto.trim();
+            if (normalizedNombreCompleto.isEmpty()) {
+                normalizedNombreCompleto = null;
+            }
+        }
+
+        String passwordHash = HashUtils.sha256Hex(password);
+        tiendaDao.crearUsuario(normalizedUsername, normalizedNombreCompleto, passwordHash, esAdmin, true);
+        return true;
+    }
+
+    @Override
+    public boolean cambiarClaveAdministrador(String username, String currentPassword, String newPassword) {
+        if (username == null || username.trim().isEmpty()
+                || currentPassword == null || currentPassword.isEmpty()
+                || newPassword == null || newPassword.isEmpty()) {
+            return false;
+        }
+
+        String currentHash = HashUtils.sha256Hex(currentPassword);
+        String newHash = HashUtils.sha256Hex(newPassword);
+        if (currentHash.equals(newHash)) {
+            return false;
+        }
+
+        return tiendaDao.actualizarClaveAdministrador(username.trim(), currentHash, newHash);
     }
 
     @Override

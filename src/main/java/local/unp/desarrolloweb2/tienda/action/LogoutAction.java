@@ -14,7 +14,10 @@ public class LogoutAction extends ActionSupport implements SessionAware {
         if (session instanceof SessionMap) {
             ((SessionMap) session).invalidate();
         } else if (session != null) {
+            session.remove("userAuthenticated");
+            session.remove("authenticatedUsername");
             session.remove("adminAuthenticated");
+            session.remove("adminUsername");
         }
         return SUCCESS;
     }

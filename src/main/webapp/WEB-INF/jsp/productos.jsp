@@ -76,6 +76,24 @@
                             <i class="fa-solid fa-circle-plus me-1"></i>
                             <s:text name="button.new" />
                         </s:a>
+                        <s:a action="usuario-nuevo" cssClass="btn btn-outline-primary btn-sm">
+                            <i class="fa-solid fa-user-plus me-1"></i>
+                            <s:text name="button.user.new" />
+                        </s:a>
+                        <s:a action="password-cambiar" cssClass="btn btn-outline-primary btn-sm">
+                            <i class="fa-solid fa-key me-1"></i>
+                            <s:text name="button.password.self" />
+                        </s:a>
+                    </s:if>
+                    <s:if test="autenticado">
+                        <s:if test="usernameAutenticado != null && !usernameAutenticado.isEmpty()">
+                            <span class="badge text-bg-secondary">
+                                <i class="fa-solid fa-user me-1"></i>
+                                <s:text name="auth.logged_as">
+                                    <s:param value="usernameAutenticado" />
+                                </s:text>
+                            </span>
+                        </s:if>
                         <s:a action="logout" cssClass="btn btn-outline-danger btn-sm">
                             <i class="fa-solid fa-right-from-bracket me-1"></i>
                             <s:text name="auth.logout" />
@@ -101,7 +119,7 @@
                 </div>
             </s:if>
 
-            <s:if test="!#isAdminSession">
+            <s:if test="!autenticado">
                 <div class="modal fade login-modal" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -192,17 +210,17 @@
                                             <s:text name="badge.delivery" />
                                         </span>
                                     </div>
-                                    <s:if test="#isAdminSession">
-                                        <div class="card-actions d-flex flex-wrap gap-2 pt-2">
-                                            <s:url var="editUrl" action="producto-editar">
-                                                <s:param name="id" value="id" />
-                                            </s:url>
-                                            <a
-                                                class="btn btn-sm btn-outline-primary action-btn"
-                                                href="<s:property value='#editUrl' />">
-                                                <i class="fa-solid fa-pen-to-square me-1"></i>
-                                                <s:text name="button.edit" />
-                                            </a>
+                                    <div class="card-actions d-flex flex-wrap gap-2 pt-2">
+                                        <s:url var="editUrl" action="producto-editar">
+                                            <s:param name="id" value="id" />
+                                        </s:url>
+                                        <a
+                                            class="btn btn-sm btn-outline-primary action-btn"
+                                            href="<s:property value='#editUrl' />">
+                                            <i class="fa-solid fa-pen-to-square me-1"></i>
+                                            <s:text name="button.edit" />
+                                        </a>
+                                        <s:if test="#isAdminSession">
                                             <s:url var="deleteUrl" action="producto-eliminar" />
                                             <s:text name="confirm.delete" var="confirmDeleteMessage">
                                                 <s:param value="nombre" />
@@ -218,13 +236,61 @@
                                                     <s:text name="button.delete" />
                                                 </button>
                                             </form>
-                                        </div>
-                                    </s:if>
+                                        </s:if>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </s:iterator>
                 </div>
+                <s:if test="totalPaginas > 1">
+                    <div class="d-flex justify-content-center mt-4">
+                        <nav aria-label="Paginación de productos">
+                            <ul class="pagination pagination-sm mb-0">
+                                <s:if test="tienePaginaAnterior">
+                                    <s:url var="previousPageUrl" action="productos">
+                                        <s:param name="page" value="paginaAnterior" />
+                                    </s:url>
+                                    <li class="page-item">
+                                        <a class="page-link" href="<s:property value='#previousPageUrl' />">
+                                            <s:text name="pagination.previous" />
+                                        </a>
+                                    </li>
+                                </s:if>
+                                <s:else>
+                                    <li class="page-item disabled">
+                                        <span class="page-link"><s:text name="pagination.previous" /></span>
+                                    </li>
+                                </s:else>
+
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <s:text name="pagination.page_status">
+                                            <s:param value="paginaActual" />
+                                            <s:param value="totalPaginas" />
+                                        </s:text>
+                                    </span>
+                                </li>
+
+                                <s:if test="tienePaginaSiguiente">
+                                    <s:url var="nextPageUrl" action="productos">
+                                        <s:param name="page" value="paginaSiguiente" />
+                                    </s:url>
+                                    <li class="page-item">
+                                        <a class="page-link" href="<s:property value='#nextPageUrl' />">
+                                            <s:text name="pagination.next" />
+                                        </a>
+                                    </li>
+                                </s:if>
+                                <s:else>
+                                    <li class="page-item disabled">
+                                        <span class="page-link"><s:text name="pagination.next" /></span>
+                                    </li>
+                                </s:else>
+                            </ul>
+                        </nav>
+                    </div>
+                </s:if>
             </s:if>
             <s:else>
                 <div class="alert alert-info d-flex align-items-center gap-2" role="alert">
