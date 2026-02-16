@@ -1,4 +1,5 @@
-<% response.sendRedirect("index.action"); %>
+<%@ page session="false" %>
+<% response.sendRedirect("productos.action"); %>
 
 
 

@@ -1,0 +1,42 @@
+services:
+  app:
+    build: .
+    container_name: tienda-app
+    ports:
+      - "9090:8080"
+    volumes:
+      - ./docker/tomcat/tomcat-users.xml:/opt/tomcat/conf/tomcat-users.xml:ro
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - tienda-net
+
+  db:
+    image: postgres:17
+    container_name: tienda-db
+    env_file:
+      - db.env
+    ports:
+      - "15433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tienda_user -d tienda"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - tienda-net
+
+volumes:
+  pgdata:
+
+networks:
+  tienda-net:
+    driver: bridge
